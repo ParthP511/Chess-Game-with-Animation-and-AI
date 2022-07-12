@@ -73,10 +73,13 @@ def findBestMove2(gs, validMoves):
 Helper method to make first recursive call
 '''
 def findBestMove(gs, validMoves):
-    global nextMove
+    global nextMove, counter
     nextMove = None
+    counter = 0
     random.shuffle(validMoves)
-    findMoveNegaMax(gs, validMoves, MAX_DEPTH, 1 if gs.whiteToMove else -1)
+    # findMoveNegaMax(gs, validMoves, MAX_DEPTH, 1 if gs.whiteToMove else -1)
+    findMoveNegaMaxAlphaBeta(gs, validMoves, MAX_DEPTH, -CHECKMATE, CHECKMATE, 1 if gs.whiteToMove else -1)
+    print(counter)
     return nextMove
 
 '''
@@ -113,10 +116,11 @@ def findMoveMinMax(gs, validMoves, depth, whiteToMove):
         return minScore
 
 '''
-
+Simplifying the MinMax function usign NegaMax logic
 '''
 def findMoveNegaMax(gs, validMoves, depth, turnMultiplier):
-    global nextMove
+    global nextMove, counter
+    counter += 1
     if depth == 0:
         return turnMultiplier * scoreBoard(gs)
 
@@ -133,6 +137,31 @@ def findMoveNegaMax(gs, validMoves, depth, turnMultiplier):
 
     return maxScore
 
+'''
+Applying alpha-beta pruning the function to minimize redundant calculations 
+'''
+def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier):
+    global nextMove, counter
+    counter += 1
+    if depth == 0:
+        return turnMultiplier * scoreBoard(gs)
+
+    # move ordering - implement later
+    maxScore =  -CHECKMATE
+    for move in validMoves:
+        gs.makeMove(move)
+        nextMoves = gs.getValidMoves()
+        score = -findMoveNegaMaxAlphaBeta(gs, nextMoves, depth - 1, -beta, -alpha, -turnMultiplier)
+        if score > maxScore:
+            maxScore = score
+            if depth == MAX_DEPTH:
+                nextMove = move
+        gs.undoMove()
+        if maxScore > alpha:    #pruning
+            alpha = maxScore
+        if alpha >= beta:
+            break
+    return maxScore
 
 
 '''
