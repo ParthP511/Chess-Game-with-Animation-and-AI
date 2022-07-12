@@ -5,4 +5,4 @@ Created a chess game with Animation
 ```
 pip install pygame
 ```
-##And now run ChessGame.py
+## And now run ChessGame.py
