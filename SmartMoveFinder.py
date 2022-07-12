@@ -157,7 +157,7 @@ def findMoveNegaMaxAlphaBeta(gs, validMoves, depth, alpha, beta, turnMultiplier)
             if depth == MAX_DEPTH:
                 nextMove = move
         gs.undoMove()
-        if maxScore > alpha:    #pruning
+        if maxScore > alpha:    #pruning to cutoff redundant branches
             alpha = maxScore
         if alpha >= beta:
             break
